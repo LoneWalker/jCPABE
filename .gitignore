@@ -1,10 +1,4 @@
-.classpath
-.settings/
-.project
-*.class
-target/
-.idea/
-*.iml
-build/
-.gradle/
-generated/
+*
+!*/
+!*.java
+!*.text

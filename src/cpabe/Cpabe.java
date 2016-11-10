@@ -15,22 +15,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Cpabe {
+
     static {
         if (System.getProperty("jna.nosys") == null) {
             Logger.getLogger(Cpabe.class.toString()).log(Level.WARNING, "New system property set (jna.nosys=true)");
             System.setProperty("jna.nosys", "true");
         }
+    /*
         try {
             System.loadLibrary("jpbc-pbc");
         } catch (UnsatisfiedLinkError e) {
             Logger.getLogger(Cpabe.class.toString()).log(Level.SEVERE, "Could not load library jpbc-pbc. JCPABE will be extremely slow.", e);
             // can't salvage this
         }
+
         PairingFactory.getInstance().setUsePBCWhenPossible(true);
         if (!PairingFactory.getInstance().isPBCAvailable()) {
             Logger.getLogger(Cpabe.class.toString()).log(Level.SEVERE, "The jpbc-pbc library was loaded, but can not be used. JCPABE will be extremely slow.");
         }
+        */
     }
+
 
     public static AbeSecretMasterKey setup() {
         return Bsw07.setup();
@@ -88,7 +93,9 @@ public class Cpabe {
     public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData) throws AbeDecryptionException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         encryptedData.writeDecryptedData(privateKey, out);
-        return out.toByteArray();
+        byte[] out_array=out.toByteArray();
+        return out_array;
+
     }
 
     public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile) throws IOException, AbeDecryptionException {
