@@ -130,7 +130,8 @@ public class Cpabe {
      */
     public static AbeEncrypted encrypt(AbePublicKey publicKey, String policy, InputStream input) throws AbeEncryptionException, IOException {
         try {
-            String parsedPolicy = PolicyParsing.parsePolicy(policy);
+            String parsedPolicy = PolicyParsing.parsePolicy(policy); // truns into postfix notation
+            //System.out.println("policy string is:"+parsedPolicy);
             Bsw07CipherAndKey cipherAndKey = Bsw07.encrypt(publicKey, parsedPolicy);
             Bsw07Cipher abeEncryptedSecret = cipherAndKey.getCipher();
             Element plainSecret = cipherAndKey.getKey();

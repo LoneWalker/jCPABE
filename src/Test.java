@@ -37,7 +37,7 @@ public class Test {
 
             //byte[] data = TUtil.getRandomData();
             //byte[] data = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
-            byte[] data = ("abcdefghijklmnop.").getBytes();
+            byte[] data = ("hhhjjhg").getBytes();
             String policy1 = "(att1 and att2) or att3";
             String policy2 = "att3 or att4 >= 5";
 
