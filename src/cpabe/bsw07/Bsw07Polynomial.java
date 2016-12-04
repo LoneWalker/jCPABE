@@ -20,11 +20,11 @@ public class Bsw07Polynomial {
     public static Bsw07Polynomial createRandom(int deg, Element zeroVal) {
         Bsw07Polynomial newPoly = new Bsw07Polynomial(deg);
         for (int i = 0; i < newPoly.coef.length; i++)
-            newPoly.coef[i] = zeroVal.duplicate();
+            newPoly.coef[i] = zeroVal.duplicate(); // just assigning objects so that they do not remain null. will be changed in the next loop
 
-        newPoly.coef[0].set(zeroVal);
+        newPoly.coef[0].set(zeroVal); // setting constant term of the polynomial as parent's
 
-        for (int i = 1; i < newPoly.coef.length; i++)
+        for (int i = 1; i < newPoly.coef.length; i++) // starts with index 1 because, index 0 is set parent's secret
             newPoly.coef[i].setToRandom();
         return newPoly;
     }

@@ -6,6 +6,7 @@ import cpabe.bsw07.policy.Bsw07PolicyLeafNode;
 import cpabe.bsw07.policy.Bsw07PolicyParentNode;
 import it.unisa.dia.gas.jpbc.Element;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,17 +115,27 @@ public class Bsw07 {
      * it (although "_" is allowed)
      */
     public static Bsw07CipherAndKey encrypt(AbePublicKey pub, String policy) throws AbeEncryptionException {
-        Bsw07PolicyAbstractNode policyTree = Bsw07PolicyAbstractNode.parsePolicy(policy, pub);
-        return encrypt(pub, policyTree);
+        Bsw07PolicyAbstractNode policyTree = Bsw07PolicyAbstractNode.parsePolicy(policy, pub); // makes the policy tree of CP-ABE from
+                                                                                                //post-fix notation of policy
+        return encrypt(pub, policyTree); // CP-ABE encryption happens here
     }
 
-    public static Bsw07CipherAndKey encrypt(AbePublicKey pub, Bsw07PolicyAbstractNode policyTree) {
-        Element s = pub.getPairing().getZr().newRandomElement();
-        Element message = pub.getPairing().getGT().newRandomElement();
-        Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message);
-        Element c = pub.h.duplicate().powZn(s);
-        policyTree.fillPolicy(pub, s);
-        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), message);
+    public static Bsw07CipherAndKey encrypt(AbePublicKey pub, Bsw07PolicyAbstractNode policyTree) { // CP-ABE encryption happens here
+        Element s = pub.getPairing().getZr().newRandomElement(); // everything on exponent are from Z_r
+        Element message = pub.getPairing().getGT().newRandomElement();      // M = message = aes key
+        Element temp = pub.getPairing().getGT().newElement();
+
+        System.out.println("The aes key to encrypt data is:"+ message.toBigInteger());
+        System.out.println("AES key length is:"+message.toString().length());
+        System.out.println("value of random s used in ciphertext:"+s.toBigInteger());
+
+        Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message); // M.e(g,g)^{as}
+        Element c = pub.h.duplicate().powZn(s); // h^s
+        policyTree.fillPolicy(pub, s);  // >> Main part to look at. The actual recursive CP-ABE encryption with policy tree is done here
+                                        // Need to make changes here
+                                        // look into the fillPolicy() function of class Bsw07PolicyParentNode. Because
+                                        // here this abstract function is implemented
+        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), message); // policyTree contains both tree and C_y, C'_y
     }
 
     /**

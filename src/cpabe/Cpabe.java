@@ -130,12 +130,13 @@ public class Cpabe {
      */
     public static AbeEncrypted encrypt(AbePublicKey publicKey, String policy, InputStream input) throws AbeEncryptionException, IOException {
         try {
-            String parsedPolicy = PolicyParsing.parsePolicy(policy); // truns into postfix notation
+            String parsedPolicy = PolicyParsing.parsePolicy(policy); // turns into postfix notation
             //System.out.println("policy string is:"+parsedPolicy);
-            Bsw07CipherAndKey cipherAndKey = Bsw07.encrypt(publicKey, parsedPolicy);
+            Bsw07CipherAndKey cipherAndKey = Bsw07.encrypt(publicKey, parsedPolicy);    // here CP-ABE encryption is done. Inside this function,
+                                                                                        // aes key is generated and CP-ABE
             Bsw07Cipher abeEncryptedSecret = cipherAndKey.getCipher();
-            Element plainSecret = cipherAndKey.getKey();
-
+            Element plainSecret = cipherAndKey.getKey(); // this key is the aes key
+            //System.out.println(plainSecret.toBytes()); // to print the aes encryption key
             if (abeEncryptedSecret == null) {
                 throw new AbeEncryptionException("ABE Encryption failed");
             }
@@ -143,7 +144,7 @@ public class Cpabe {
             byte[] iv = new byte[16];
             SecureRandom random = new SecureRandom();
             random.nextBytes(iv);
-            return AbeEncrypted.createDuringEncryption(iv, abeEncryptedSecret, input, plainSecret);
+            return AbeEncrypted.createDuringEncryption(iv, abeEncryptedSecret, input, plainSecret); // here aes encryption is done
         } catch (ParseException e) {
             throw new AbeEncryptionException("error while parsing policy", e);
         }

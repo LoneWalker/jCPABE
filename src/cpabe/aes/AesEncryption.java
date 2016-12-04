@@ -41,7 +41,7 @@ public class AesEncryption {
     }
 
     private static byte[] combine(byte[] cpabeData, byte[] lbeKey) {
-        byte[] hashedCpabeSecret = hash(cpabeData);
+        byte[] hashedCpabeSecret = hash(cpabeData); // hash function does sha hashing and then returns 16 bytes
         if (lbeKey != null) {
             if (hashedCpabeSecret.length != lbeKey.length) {
                 throw new RuntimeException("wrong key size for lbeKey, " + hashedCpabeSecret.length + " bytes required");

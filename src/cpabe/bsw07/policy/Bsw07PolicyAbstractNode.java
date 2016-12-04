@@ -36,15 +36,16 @@ public abstract class Bsw07PolicyAbstractNode {
     private static final Pattern ofPattern = Pattern.compile(of);
 
     public static Bsw07PolicyAbstractNode parsePolicy(String s, AbePublicKey publicKey) throws AbeEncryptionException {
+        System.out.println("Post-fix notation of policy tree is: "+s);
         ArrayList<Bsw07PolicyAbstractNode> stack = new ArrayList<Bsw07PolicyAbstractNode>();
         String[] toks = s.split("\\s+");
         for (int index = 0; index < toks.length; index++) {
             String curToken = toks[index];
             Matcher matcher = ofPattern.matcher(curToken);
-            if (!matcher.matches()) {
+            if (!matcher.matches()) { // if not an intermediate node ie not k out of n node
                 stack.add(new Bsw07PolicyLeafNode(curToken, publicKey));
             } else {
-                int threshold = Integer.parseInt(matcher.group(1));
+                int threshold = Integer.parseInt(matcher.group(1)); // 2 our of 3. here, 2 is the threshold and 3 is num of children
                 int numChildren = Integer.parseInt(matcher.group(2));
 
                 if (threshold < 1) {

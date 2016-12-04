@@ -73,12 +73,14 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    public void fillPolicy(AbePublicKey pub, Element e) {
-        poly = Bsw07Polynomial.createRandom(getThreshold() - 1, e);
+    public void fillPolicy(AbePublicKey pub, Element e) { // this is a recursive function. Each node of the policy tree has a polynomial poly
+                                                            // in each recursive call, this poly is formed
+        poly = Bsw07Polynomial.createRandom(getThreshold() - 1, e); // creating a polynomial of given degree
+        System.out.println("Threshold vale:"+getThreshold());
         for (int i = 0; i < children.size(); i++) {
-            Element r = pub.getPairing().getZr().newElement(i + 1);
-            Element t = evalPoly(poly, r);
-            children.get(i).fillPolicy(pub, t);
+            Element r = pub.getPairing().getZr().newElement(i + 1); // x value or children index. here i+1 because 0th child's constant value is equal to y value of its parent at x=1
+            Element t = evalPoly(poly, r); // y value of polynomial value at point i+1
+            children.get(i).fillPolicy(pub, t); // to fill the polynomial of ith children.
         }
     }
 
