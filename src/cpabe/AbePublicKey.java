@@ -65,6 +65,8 @@ public class AbePublicKey {
         if (p == null) {
             PairingParameters params = new PropertiesParameters().load(new ByteArrayInputStream(pairingDesc.getBytes()));
             p = PairingFactory.getPairing(params);
+            PairingFactory.getInstance().setUsePBCWhenPossible(true); //to use the PBC wrapper and gain in performance, the usePBCWhenPossible property of the pairing factory must be set.
+
         }
         return p;
     }

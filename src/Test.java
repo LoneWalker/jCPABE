@@ -32,6 +32,10 @@ public class Test {
         */
 
         try {
+
+            TGDH obj = new TGDH();
+            obj.makeTGDHTree();
+
             AbeSecretMasterKey smKey = Cpabe.setup();
             AbePublicKey pubKey = smKey.getPublicKey();
 
