@@ -125,11 +125,26 @@ public class Bsw07 {
         Element message = pub.getPairing().getGT().newRandomElement();      // M = message = aes key
         Element temp = pub.getPairing().getGT().newElement();
 
-        System.out.println("The aes key to encrypt data is:"+ message.toBigInteger());
+        System.out.println("The aes key to encrypt data (in string):"+ message.toString());
+        System.out.println("The aes key to encrypt data (in big integer):"+ message.toBigInteger());
         System.out.println("AES key length is:"+message.toString().length());
         System.out.println("value of random s used in ciphertext:"+s.toBigInteger());
 
-        Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message); // M.e(g,g)^{as}
+        Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message); // M.e(g,g)^{as} // need to check if
+                                                                                           //pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message.BigInteger())
+                                                                                                    //can be decrypted successfully by modifying decrypt function properly
+        Element cs_mul_with_bigInt = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message.toBigInteger());
+        System.out.println("With point * point  M.e_g_g_hat_alpha="+cs.toString());
+        System.out.println("With point * BigInt M.e_g_g_hat_alpha="+cs_mul_with_bigInt.toString());
+        System.out.println("temp="+temp.toString());
+
+        //experiment start
+        Element e_g_g_as = pub.e_g_g_hat_alpha.duplicate().powZn(s) ;
+        Element M = cs_mul_with_bigInt.duplicate().mul(e_g_g_as.duplicate().invert());
+        System.out.println("M string ="+M.toString());
+        System.out.println("M BigInt ="+M.toBigInteger());
+        // experiment ends
+
         Element c = pub.h.duplicate().powZn(s); // h^s
         policyTree.fillPolicy(pub, s);  // >> Main part to look at. The actual recursive CP-ABE encryption with policy tree is done here
                                         // Need to make changes here

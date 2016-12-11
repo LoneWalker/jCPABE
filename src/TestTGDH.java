@@ -10,7 +10,7 @@ import java.math.BigInteger;
 /**
  * Created by azhar on 12/3/16.
  */
-public class TGDH {
+public class TestTGDH {
 
     public void makeTGDHTree(){
 
@@ -46,7 +46,8 @@ public class TGDH {
 
     private Element getZr(Element e, AbePublicKey pub){
 
-        String val = e.toString().split(",")[0];
-        return pub.getPairing().getZr().newElement(new BigInteger(val));
+        //String val = e.toString().split(",")[0];
+        //return pub.getPairing().getZr().newElement(new BigInteger(val));
+        return pub.getPairing().getZr().newElement(e.toBigInteger()); // same result as previous one
     }
 }

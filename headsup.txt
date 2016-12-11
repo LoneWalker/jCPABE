@@ -1,0 +1,12 @@
+General Findings about library:
+1) elements in G1,G2 are points with three components. Their toBigInteger() cannot be called.
+2) elements of Zr are integers and toBigInteger() can be called here
+3) elements in GT have x,y value and toBigInteger() method returns the x value;
+4) e(g,g) gives result in GT 
+
+
+
+1) look at fillPolicy function of class Bsw07PolicyLeafNode. Here R_G value is needed
+2) exponent operation is done using function powZn(Element exp)
+3) M.e(g,g)^{as} , here M can be from G_T or more specifically an Integer. But point produces different result than BigInt a point in G_T.
+4) Elements in G1, G2, GT are points not Integers. So, to work with them, need to convert into integers. Taking any of the coordinate of those points would work. This can be done by calling toBigInteger() function of Element(gives x co-ordinate).

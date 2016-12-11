@@ -1,9 +1,17 @@
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import cpabe.*;
 import cpabe.tests.TUtil;
+import it.unisa.dia.gas.jpbc.Element;
+import tgdh.*;
+import user.DMGSDSGroup;
+import user.DMGSDSUser;
+import utils.Constants;
+import utils.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.concurrent.Exchanger;
@@ -31,13 +39,31 @@ public class Test {
         }
         */
 
+
+
         try {
 
-            TGDH obj = new TGDH();
-            obj.makeTGDHTree();
 
+            ArrayList<DMGSDSUser> userArrayList = new ArrayList<>();
+
+            /************* For Group 1****************/
+            int totalUsers= 7;
+            int GID1=0;
+            for(int i=0; i<totalUsers; i++){
+                userArrayList.add(new DMGSDSUser(i,GID1, Constants.PK.getPairing().getZr().newRandomElement()));
+            }
+            DMGSDSGroup dmgsdsGroup1= new DMGSDSGroup(GID1, userArrayList);
+            System.out.println("Success!!");
+
+
+            //TGDH obj = new TGDH();
+            //obj.makeTGDHTree();
+
+            /*
             AbeSecretMasterKey smKey = Cpabe.setup();
             AbePublicKey pubKey = smKey.getPublicKey();
+
+
 
             //byte[] data = TUtil.getRandomData();
             //byte[] data = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
@@ -79,6 +105,7 @@ public class Test {
             //System.out.println("Encrypted message:"+policy2EncryptedTest.toString());
             //System.out.println("Decrypted message:");
             //printCipher(output);
+            */
 
         }catch (Exception ex){
             ex.printStackTrace();

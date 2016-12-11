@@ -133,7 +133,7 @@ public class Cpabe {
             String parsedPolicy = PolicyParsing.parsePolicy(policy); // turns into postfix notation
             //System.out.println("policy string is:"+parsedPolicy);
             Bsw07CipherAndKey cipherAndKey = Bsw07.encrypt(publicKey, parsedPolicy);    // here CP-ABE encryption is done. Inside this function,
-                                                                                        // aes key is generated and CP-ABE
+                                                                                        // aes key is generated and CP-ABE is done
             Bsw07Cipher abeEncryptedSecret = cipherAndKey.getCipher();
             Element plainSecret = cipherAndKey.getKey(); // this key is the aes key
             //System.out.println(plainSecret.toBytes()); // to print the aes encryption key
