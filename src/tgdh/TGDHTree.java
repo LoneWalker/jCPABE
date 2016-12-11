@@ -138,19 +138,58 @@ public class TGDHTree {
             //      else call split and then setUser
     }
 
-    public void revokeUser(){
+    public void userJoin(DMGSDSUser user){
+
+    }
+    public void revokeUser(DMGSDSUser user){
 
     }
 
     public void pruneTree(){
 
     }
+    public ArrayList<Element> getCoPathBKs(DMGSDSUser user){
+
+        ArrayList<Element> list=null;
+        TGDHNode node = userLeafNodeMap.get(user);
+        if (node!=null){
+            list= new ArrayList<>();
+            while (node.parent!=null){
+                TGDHNode sibling =  getSibling(node);
+                list.add(sibling.BK);
+                node=node.parent;
+            }
+        }
+
+        return list;
+
+    }
+
+    private TGDHNode getSibling(TGDHNode node){
+        TGDHNode sibling=null;
+        //if (node.parent!=null){ // this will be ensured from the caller
+        TGDHNode ln=node.parent.lChild;
+        TGDHNode rn=node.parent.rChild;
+
+        if (node.equals(ln)){
+            sibling = rn;
+        }else {
+            sibling = ln;
+        }
+
+        return sibling;
+
+    }
+
     private double logBase2(double val){
         return Math.log(val)/Math.log(2.0);
     }
 
     public int getGroupVersion(){
         return this.groupVersion;
+    }
+    public void setGroupVersion(int groupVersion){
+        this.groupVersion=groupVersion;
     }
     public void incrementGroupVersion(){
         groupVersion++;

@@ -50,9 +50,11 @@ public class Test {
             int totalUsers= 7;
             int GID1=0;
             for(int i=0; i<totalUsers; i++){
-                userArrayList.add(new DMGSDSUser(i,GID1, Constants.PK.getPairing().getZr().newRandomElement()));
+                userArrayList.add(new DMGSDSUser(i, Constants.PK.getPairing().getZr().newRandomElement()));
             }
             DMGSDSGroup dmgsdsGroup1= new DMGSDSGroup(GID1, userArrayList);
+            dmgsdsGroup1.userList.get(3).computeCurrentGroupKeyPair();
+
             System.out.println("Success!!");
 
 
