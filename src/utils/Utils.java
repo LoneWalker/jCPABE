@@ -18,6 +18,5 @@ public class Utils {
     public static Element getZr(Element e){
         String val = e.toString().split(",")[0];
         return Constants.PK.getPairing().getZr().newElement(new BigInteger(val));
-
     }
 }

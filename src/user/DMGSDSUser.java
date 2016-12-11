@@ -1,11 +1,13 @@
 package user;
 
 import it.unisa.dia.gas.jpbc.Element;
+import tgdh.TGDHKeyPair;
 import tgdh.TGDHNode;
 import utils.Constants;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by azhar on 12/10/16.
@@ -21,11 +23,14 @@ public class DMGSDSUser {
     public Element TGDH_GROUP_K;
     public Element TGDH_GROUP_BK;
 
+    public HashMap<Integer, TGDHKeyPair> groupVersionTable;
+
 
     public DMGSDSUser(int UID, Element TGDH_K){
         this.UID=UID;
         this.TGDH_K = TGDH_K;
         this.TGDH_BK= Constants.PK.g.duplicate().powZn(this.TGDH_K);
+        this.groupVersionTable= new HashMap<>();
 
     }
 
@@ -48,6 +53,8 @@ public class DMGSDSUser {
             }
             TGDH_K=tempK;
             TGDH_BK=tempBK;
+
+            this.groupVersionTable.put(this.dmgsdsGroup.groupCurrVer, new TGDHKeyPair(this.dmgsdsGroup.groupCurrVer,TGDH_GROUP_K,TGDH_GROUP_BK));
 
         }else {
             System.out.println("BK list in user co-path is null");

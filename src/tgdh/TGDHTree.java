@@ -159,6 +159,8 @@ public class TGDHTree {
                 list.add(sibling.BK);
                 node=node.parent;
             }
+        }else {
+            System.out.println("User is not in the TGDH tree!!");
         }
 
         return list;
