@@ -19,18 +19,20 @@ public class TGDHTree {
     ArrayList<TGDHNode> leafList; // contains all the leaves in TGDH tree
     private int groupVersion=0;
     public TGDHNode root;
-    public HashMap<Integer,TGDHNode> userNodeMap; // contains
+    public HashMap<DMGSDSUser,TGDHNode> userLeafNodeMap; // contains
     int totalUsers;
 
 
     public TGDHTree(int totalUsers){
         this.totalUsers=totalUsers;
         leafList= new ArrayList<>(totalUsers);
+        userLeafNodeMap =new HashMap<>(totalUsers);
     }
 
     public TGDHTree(ArrayList<DMGSDSUser> userList){
         this.totalUsers=userList.size();
         leafList= new ArrayList<>(totalUsers);
+        userLeafNodeMap =new HashMap<>(totalUsers);
         TGDHInit(userList);
     }
 
@@ -124,7 +126,9 @@ public class TGDHTree {
         }else {
             for (int i=0; i<userList.size() ;i++){
                 TGDHNode leaf=leafList.get(i);
-                leaf.setUser(userList.get(i));
+                DMGSDSUser user = userList.get(i);
+                leaf.setUser(user);
+                userLeafNodeMap.put(user,leaf);
             }
         }
     }
