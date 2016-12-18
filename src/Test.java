@@ -43,12 +43,22 @@ public class Test {
 
         try {
 
+            /*************** CP-ABE initialization**********/
+
+            Constants.MK = Cpabe.setup();
+            Constants.PK = Constants.MK.getPublicKey();
+
+            /************** end of CP-ABE initialization *******/
 
             ArrayList<DMGSDSUser> userArrayList = new ArrayList<>();
 
             /************* For Group 1****************/
-            int totalUsers= 7;
+            int totalUsers= 10;
             int GID1=0;
+
+
+
+            long t= System.currentTimeMillis();
             for(int i=0; i<totalUsers; i++){
                 userArrayList.add(new DMGSDSUser(i, Constants.PK.getPairing().getZr().newRandomElement()));
             }
@@ -57,11 +67,135 @@ public class Test {
 
             System.out.println("Success!!");
 
+            // run for 3,4,5,6 attributes
+
+            /*** I-ABDS***********/
+
+            byte[] data = ("hhhjjhghkjhfaisudhfiaewuhflkjasdhflkjas").getBytes();
+            String attributes[]={"att0","att1","att2","att3","att4","att5","att6","att7","att8","att9","att10"};
+            String policy[] = {"","","","(att1 and att2) or att3","(att1 and att2) or (att3 and att4)",
+                    "(att1 or att2 or att3) and att4 and att5 ","(att1 or att2 or att3) and att4 and (att5 or att6) "};
+            int noOFUsers=800;
+            int totalAttsInPolicy=6;
+            int avgPolicyPerPerson=10;
+            int membersPerGroup=50;
+            int discUsers=(int)(noOFUsers/((double)avgPolicyPerPerson));
+            int avgUserPerAttGroup=(int)(discUsers/2.0);
+
+
+            String att1att2Attribute = "att1 att2 att3 att4 att5 att6";
+            AbePrivateKey att1att2Key = Cpabe.keygen(Constants.MK, att1att2Attribute);
+
+            t=System.currentTimeMillis();
+
+
+            for (int i=0;i<discUsers; i++){
+                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
+            }
+
+            AbeEncrypted policy1EncryptedTest = Cpabe.encrypt(Constants.PK, policy[totalAttsInPolicy], data);
+            Element r = Constants.PK.getPairing().getZr().newRandomElement();
+            for (int j=0; j<totalAttsInPolicy; j++){
+                Constants.PK.g.duplicate().powZn(r);
+            }
+
+            System.out.println("I-ABDS Encryption time"+(System.currentTimeMillis()-t));
+
+
+
+            t=System.currentTimeMillis();
+
+            /***********I-ABDS Decrypt*********/
+
+
+            byte[] output = decrypt(att1att2Key, policy1EncryptedTest);
+
+
+            for (int i=0;i<totalAttsInPolicy; i++){
+                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
+            }
+
+
+            int iteration=totalAttsInPolicy*(avgUserPerAttGroup+1);
+            for (int j=0; j<iteration; j++){
+                Constants.PK.g.duplicate().powZn(r);
+            }
+
+
+
+            System.out.println("I-ABDS Decrypt:"+(System.currentTimeMillis()-t));
+            /*********** End I-ABDS Decrypt*********/
+
+
+
+            /******** Our scheme ***********/
+            /******* Our Enc************/
+
+            t=System.currentTimeMillis();
+
+            policy1EncryptedTest = Cpabe.encrypt(Constants.PK, policy[totalAttsInPolicy], data);
+
+            iteration=(int) (totalUsers/((double)membersPerGroup));
+            for (int i=0;i<iteration; i++){
+                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
+            }
+
+
+
+
+
+
+            System.out.println("Our encrypt:"+(System.currentTimeMillis()-t));
+            /******* End our  Enc************/
+
+
+
+
+
+            /*******Our  Dec ************/
+            t=System.currentTimeMillis();
+
+
+            decrypt(att1att2Key, policy1EncryptedTest);
+
+            Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
+
+
+            iteration=totalAttsInPolicy+Utils.logBase2(membersPerGroup);
+            for (int j=0; j<iteration; j++){
+                Constants.PK.g.duplicate().powZn(r);
+            }
+
+
+
+            System.out.println("Our Decrypt:"+(System.currentTimeMillis()-t));
+            /******* End our Dec************/
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
+            System.out.println("Time required for TGDH init ="+(System.currentTimeMillis()-t));
+
+            byte[] a=Utils.hashT(Constants.PK.e_g_g_hat_alpha.toBytes());
+            System.out.println("length of a ="+a.length+" ;value="+Utils.bytesToHex(a));
+
+
+
 
             //TGDH obj = new TGDH();
             //obj.makeTGDHTree();
 
-            /*
+
+
             AbeSecretMasterKey smKey = Cpabe.setup();
             AbePublicKey pubKey = smKey.getPublicKey();
 

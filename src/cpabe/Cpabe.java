@@ -145,6 +145,7 @@ public class Cpabe {
             SecureRandom random = new SecureRandom();
             random.nextBytes(iv);
             return AbeEncrypted.createDuringEncryption(iv, abeEncryptedSecret, input, plainSecret); // here aes encryption is done
+                                                                                                    // plainSecret is the CP-ABE M
         } catch (ParseException e) {
             throw new AbeEncryptionException("error while parsing policy", e);
         }

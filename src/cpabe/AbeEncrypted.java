@@ -33,7 +33,7 @@ public class AbeEncrypted implements AutoCloseable {
     }
 
     public static AbeEncrypted createDuringEncryption(byte[] iv, Bsw07Cipher cipher, InputStream input, Element plainSecret) throws AbeEncryptionException, IOException {
-        return new AbeEncrypted(iv, cipher, AesEncryption.encrypt(plainSecret.toBytes(), null, iv, input));
+        return new AbeEncrypted(iv, cipher, AesEncryption.encrypt(plainSecret.toBytes(), null, iv, input)); // plainSecret is the CP-ABE M
     }
 
     public static AbeEncrypted createDuringEncryption(byte[] iv, byte[] lbeKey, Bsw07Cipher cipher, InputStream input, Element plainSecret) throws AbeEncryptionException, IOException {
