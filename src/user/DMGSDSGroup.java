@@ -13,7 +13,7 @@ public class DMGSDSGroup {
     int GID;
     int groupCurrVer;
     public ArrayList<DMGSDSUser> userList=new ArrayList<>();
-    TGDHTree tgdhTree;
+    public TGDHTree tgdhTree;
 
     public DMGSDSGroup(int GID, ArrayList<DMGSDSUser> userList){
         this.userList = userList;

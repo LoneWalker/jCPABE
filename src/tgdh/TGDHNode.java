@@ -13,8 +13,8 @@ public class TGDHNode {
     public TGDHNode lChild;
     public TGDHNode rChild;
     public int uid=-1;
-    Element K;
-    Element BK;
+    public Element K;
+    public Element BK;
     public  boolean isLeaf=false;
 
     public TGDHNode(){

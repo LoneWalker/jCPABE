@@ -1,30 +1,19 @@
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import IBE.IBE;
+import IBE.IBECT;
+
 import cpabe.*;
-import cpabe.tests.TUtil;
 import it.unisa.dia.gas.jpbc.Element;
-import tgdh.*;
 import user.DMGSDSGroup;
 import user.DMGSDSUser;
 import utils.Constants;
-import utils.Utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-import java.util.concurrent.Exchanger;
-
-import static cpabe.Cpabe.decrypt;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by azhar on 11/2/16.
  */
 public class Test {
-    public static void main(String[] arg){
+    public static void main(java.lang.String[] arg){
 
         /*
         String publicKeyFileName="publickey.txt";
@@ -65,122 +54,23 @@ public class Test {
             DMGSDSGroup dmgsdsGroup1= new DMGSDSGroup(GID1, userArrayList);
             dmgsdsGroup1.userList.get(3).computeCurrentGroupKeyPair();
 
-            System.out.println("Success!!");
+            System.out.println("Successfully created group with total "+totalUsers+" users");
 
-            // run for 3,4,5,6 attributes
+            Element element = Constants.PK.getPairing().getZr().newRandomElement();
 
-            /*** I-ABDS***********/
-
-            byte[] data = ("hhhjjhghkjhfaisudhfiaewuhflkjasdhflkjas").getBytes();
-            String attributes[]={"att0","att1","att2","att3","att4","att5","att6","att7","att8","att9","att10"};
-            String policy[] = {"","","","(att1 and att2) or att3","(att1 and att2) or (att3 and att4)",
-                    "(att1 or att2 or att3) and att4 and att5 ","(att1 or att2 or att3) and att4 and (att5 or att6) "};
-            int noOFUsers=800;
-            int totalAttsInPolicy=6;
-            int avgPolicyPerPerson=10;
-            int membersPerGroup=50;
-            int discUsers=(int)(noOFUsers/((double)avgPolicyPerPerson));
-            int avgUserPerAttGroup=(int)(discUsers/2.0);
-
-
-            String att1att2Attribute = "att1 att2 att3 att4 att5 att6";
-            AbePrivateKey att1att2Key = Cpabe.keygen(Constants.MK, att1att2Attribute);
-
-            t=System.currentTimeMillis();
-
-
-            for (int i=0;i<discUsers; i++){
-                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
+            while (element.getLengthInBytes()!=20){
+                element=Constants.PK.getPairing().getZr().newRandomElement();
+                System.out.println(element.getLengthInBytes());
+                System.out.println(element.toBytes().length);
             }
+            byte[] data=element.toBytes();
 
-            AbeEncrypted policy1EncryptedTest = Cpabe.encrypt(Constants.PK, policy[totalAttsInPolicy], data);
-            Element r = Constants.PK.getPairing().getZr().newRandomElement();
-            for (int j=0; j<totalAttsInPolicy; j++){
-                Constants.PK.g.duplicate().powZn(r);
-            }
+            System.out.println("Encrypting for data: "+element);
+            IBECT ibect = IBE.encrypt("0",data, dmgsdsGroup1.tgdhTree.root.BK);
+            System.out.println("Encryption done for "+ Constants.PK.getPairing().getZr().newElementFromBytes(data));
 
-            System.out.println("I-ABDS Encryption time"+(System.currentTimeMillis()-t));
-
-
-
-            t=System.currentTimeMillis();
-
-            /***********I-ABDS Decrypt*********/
-
-
-            byte[] output = decrypt(att1att2Key, policy1EncryptedTest);
-
-
-            for (int i=0;i<totalAttsInPolicy; i++){
-                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
-            }
-
-
-            int iteration=totalAttsInPolicy*(avgUserPerAttGroup+1);
-            for (int j=0; j<iteration; j++){
-                Constants.PK.g.duplicate().powZn(r);
-            }
-
-
-
-            System.out.println("I-ABDS Decrypt:"+(System.currentTimeMillis()-t));
-            /*********** End I-ABDS Decrypt*********/
-
-
-
-            /******** Our scheme ***********/
-            /******* Our Enc************/
-
-            t=System.currentTimeMillis();
-
-            policy1EncryptedTest = Cpabe.encrypt(Constants.PK, policy[totalAttsInPolicy], data);
-
-            iteration=(int) (totalUsers/((double)membersPerGroup));
-            for (int i=0;i<iteration; i++){
-                Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
-            }
-
-
-
-
-
-
-            System.out.println("Our encrypt:"+(System.currentTimeMillis()-t));
-            /******* End our  Enc************/
-
-
-
-
-
-            /*******Our  Dec ************/
-            t=System.currentTimeMillis();
-
-
-            decrypt(att1att2Key, policy1EncryptedTest);
-
-            Utils.IBEenc(attributes[9],dmgsdsGroup1.userList.get(3).TGDH_BK);
-
-
-            iteration=totalAttsInPolicy+Utils.logBase2(membersPerGroup);
-            for (int j=0; j<iteration; j++){
-                Constants.PK.g.duplicate().powZn(r);
-            }
-
-
-
-            System.out.println("Our Decrypt:"+(System.currentTimeMillis()-t));
-            /******* End our Dec************/
-
-
-
-
-
-
-
-
-
-
-
+            byte[] decrypted_data=IBE.decrypt(ibect,dmgsdsGroup1.tgdhTree.root.K);
+            System.out.println("Decrypted data :"+ Constants.PK.getPairing().getZr().newElementFromBytes(decrypted_data));
 
             /*
             System.out.println("Time required for TGDH init ="+(System.currentTimeMillis()-t));
