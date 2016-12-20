@@ -79,7 +79,7 @@ public abstract class Bsw07PolicyAbstractNode {
         return stack.get(0); // the root of the tree
     }
 
-    public abstract void fillPolicy(AbePublicKey pub, Element e);
+    public abstract void fillPolicy(AbePublicKey pub, Element e, Element groupDelimiter);
 
     public abstract boolean isSatisfiable(AbePrivateKey prv);
 

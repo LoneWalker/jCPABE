@@ -46,4 +46,11 @@ public class AbeInputStream extends DataInputStream {
         readFully(bytes);
         return publicKey.getPairing().getFieldAt(fieldIndex).newElementFromBytes(bytes);
     }
+
+    public byte[] readBytes() throws IOException{
+        int length=readInt();
+        byte[] bytes = new byte[length];
+        readFully(bytes);
+        return bytes;
+    }
 }

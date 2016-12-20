@@ -71,6 +71,13 @@ public class Test {
             byte[] decrypted_data=IBE.decrypt(ibect,dmgsdsGroup1.tgdhTree.root.K);
             System.out.println("Decrypted data :"+ Constants.PK.getPairing().getZr().newElementFromBytes(decrypted_data));
 
+            Element exponent = Constants.PK.getPairing().getZr().newRandomElement();
+            System.out.println("Before multiplication="+exponent);
+            exponent=element.duplicate().mulZn(exponent);
+            System.out.println("After multiplication="+exponent);
+            exponent=exponent.mulZn(element.duplicate().invert());
+            System.out.println("After division="+exponent);
+
             /*
             System.out.println("Time required for TGDH init ="+(System.currentTimeMillis()-t));
 

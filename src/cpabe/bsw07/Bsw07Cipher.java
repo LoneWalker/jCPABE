@@ -16,26 +16,26 @@ public class Bsw07Cipher {
     /**
      * GT
      **/
-    private Element cs;
+    private byte[] cs;
     /**
      * G1
      **/
     private Element c;
 
-    public Bsw07Cipher(Bsw07PolicyAbstractNode policy, Element cs, Element c) {
+    public Bsw07Cipher(Bsw07PolicyAbstractNode policy, byte[] cs, Element c) {
         this.policyTree = policy;
         this.cs = cs;
         this.c = c;
     }
 
     public static Bsw07Cipher readFromStream(AbeInputStream stream) throws IOException {
-        Element cs = stream.readElement();
+        byte[] cs = stream.readBytes();
         Element c = stream.readElement();
         Bsw07PolicyAbstractNode policyTree = Bsw07PolicyAbstractNode.readFromStream(stream);
         return new Bsw07Cipher(policyTree, cs, c);
     }
 
-    public Element getCs() {
+    public byte[] getCs() {
         return cs;
     }
 
@@ -44,7 +44,7 @@ public class Bsw07Cipher {
     }
 
     public void writeToStream(AbeOutputStream stream) throws IOException {
-        stream.writeElement(cs);
+        stream.writeBytes(cs);
         stream.writeElement(c);
         policyTree.writeToStream(stream);
     }

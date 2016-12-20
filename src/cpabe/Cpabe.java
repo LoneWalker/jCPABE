@@ -136,7 +136,7 @@ public class Cpabe {
                                                                                         // aes key is generated and CP-ABE is done
             Bsw07Cipher abeEncryptedSecret = cipherAndKey.getCipher();
             Element plainSecret = cipherAndKey.getKey(); // this key is the aes key
-            //System.out.println(plainSecret.toBytes()); // to print the aes encryption key
+            Element groupDelimiter = cipherAndKey.getGroupDelimiter();
             if (abeEncryptedSecret == null) {
                 throw new AbeEncryptionException("ABE Encryption failed");
             }

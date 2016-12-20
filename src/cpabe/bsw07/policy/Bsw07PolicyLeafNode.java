@@ -58,9 +58,10 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    public void fillPolicy(AbePublicKey pub, Element e) {
+    public void fillPolicy(AbePublicKey pub, Element e, Element groupDelimiter) {
         c = pub.g.duplicate().powZn(e);
-        cp = hashedAttribute.duplicate().powZn(e); // here R_G is needed to be exponentiated
+        Element exponent = e.duplicate().mulZn(groupDelimiter);
+        cp = hashedAttribute.duplicate().powZn(exponent); // here R_G is needed to be exponentiated
     }
 
     @Override

@@ -29,4 +29,9 @@ public class AbeOutputStream extends DataOutputStream {
         write(bytes);
     }
 
+    public void writeBytes(byte[] bytes) throws  IOException{
+        writeInt(bytes.length);
+        write(bytes);
+    }
+
 }
