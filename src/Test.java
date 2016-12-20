@@ -1,6 +1,5 @@
-import IBE.IBE;
-import IBE.IBECT;
 
+import ibe.*;
 import cpabe.*;
 import it.unisa.dia.gas.jpbc.Element;
 import user.DMGSDSGroup;
