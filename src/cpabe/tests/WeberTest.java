@@ -1,6 +1,7 @@
 package cpabe.tests;
 
 import cpabe.*;
+import it.unisa.dia.gas.jpbc.Element;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ public class WeberTest {
     // so we dont need to check for exceptions every time we want to decrypt
     private byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData, byte[] lbeKey) {
         try {
-            return CpabeWeber.decrypt(privateKey, encryptedData, lbeKey);
+            Element groupDelimiter= privateKey.getPublicKey().getPairing().getZr().newRandomElement();
+            return CpabeWeber.decrypt(privateKey, encryptedData, lbeKey,groupDelimiter);
         } catch (Exception e) {
             return null;
         }

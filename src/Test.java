@@ -55,28 +55,47 @@ public class Test {
 
             System.out.println("Successfully created group with total "+totalUsers+" users");
 
-            Element element = Constants.PK.getPairing().getZr().newRandomElement();
 
-            while (element.getLengthInBytes()!=20){
-                element=Constants.PK.getPairing().getZr().newRandomElement();
-                System.out.println(element.getLengthInBytes());
-                System.out.println(element.toBytes().length);
-            }
-            byte[] data=element.toBytes();
 
-            System.out.println("Encrypting for data: "+element);
-            IBECT ibect = IBE.encrypt("0",data, dmgsdsGroup1.tgdhTree.root.BK);
-            System.out.println("Encryption done for "+ Constants.PK.getPairing().getZr().newElementFromBytes(data));
+            // ENCRYPTION testing
+                //CPABE
+            byte[] data = ("hhhjjhg6971263947162394716234hjkashfkjhsgdkfhgskdhjfgkhj").getBytes();
+
+
+            System.out.println("Original message in string: "+new String(data));
+            printCipher(data);
+
+
+            String policy1 = "(att1 and att2) or att3";
+            //String policy2 = "att3 or att4 >= 5";
+
+            String att1att2Attribute = "att1 att2";
+            //String att3att4Attribute = "att3 att4 = 42";
+
+            AbePrivateKey att1att2Key = Cpabe.keygen(Constants.MK, att1att2Attribute);
+            //AbePrivateKey att3att4Key = Cpabe.keygen(Constants.MK, att3att4Attribute);
+            AbeEncrypted policy1EncryptedTest = Cpabe.encrypt(Constants.PK, policy1, data);
+
+                //IBE
+
+            //System.out.println("Encrypting for data: "+policy1EncryptedTest.getGroupDelimiter());
+            IBECT ibect = IBE.encrypt("0",policy1EncryptedTest.getGroupDelimiter().toBytes(), dmgsdsGroup1.tgdhTree.root.BK);
+
+
+            // DECRYPTION
+
+                //IBE
 
             byte[] decrypted_data=IBE.decrypt(ibect,dmgsdsGroup1.tgdhTree.root.K);
-            System.out.println("Decrypted data :"+ Constants.PK.getPairing().getZr().newElementFromBytes(decrypted_data));
+            Element groupDelimiter=Constants.PK.getPairing().getZr().newElementFromBytes(decrypted_data);
+            //System.out.println("IBE Decrypted data :"+ groupDelimiter);
 
-            Element exponent = Constants.PK.getPairing().getZr().newRandomElement();
-            System.out.println("Before multiplication="+exponent);
-            exponent=element.duplicate().mulZn(exponent);
-            System.out.println("After multiplication="+exponent);
-            exponent=exponent.mulZn(element.duplicate().invert());
-            System.out.println("After division="+exponent);
+                //CPABE
+
+
+            byte[] output = Cpabe.decrypt(att1att2Key, policy1EncryptedTest,groupDelimiter);
+            System.out.println("Decrypted message in string: "+ new String(output));
+            printCipher(output);
 
             /*
             System.out.println("Time required for TGDH init ="+(System.currentTimeMillis()-t));
@@ -146,6 +165,7 @@ public class Test {
     }
 
     public static void printCipher(byte[] cipher){
+        System.out.println("Message in integer value:");
         for (int i=0; i<cipher.length; i++)
             System.out.print(new Integer(cipher[i])+" ");
         System.out.println("");

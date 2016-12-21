@@ -11,6 +11,7 @@ public class AbeEncrypted implements AutoCloseable {
     Bsw07Cipher cipher;
     byte[] iv;
     InputStream dataStream; // the encrypted data
+    public Element groupDelimiter;
 
     AbeEncrypted(byte[] iv, Bsw07Cipher cipher, InputStream dataStream) {
         this.iv = iv;
@@ -18,6 +19,16 @@ public class AbeEncrypted implements AutoCloseable {
         this.dataStream = dataStream;
     }
 
+    AbeEncrypted(byte[] iv, Bsw07Cipher cipher, InputStream dataStream, Element groupDelimiter) {
+        this.iv = iv;
+        this.cipher = cipher;
+        this.dataStream = dataStream;
+        this.groupDelimiter=groupDelimiter;
+    }
+
+    public Element getGroupDelimiter(){
+        return this.groupDelimiter;
+    }
     public static AbeEncrypted readFromFile(AbePublicKey publicKey, File file) throws IOException {
         return AbeEncrypted.readFromStream(publicKey, new BufferedInputStream(new FileInputStream(file)));
     }
@@ -34,6 +45,10 @@ public class AbeEncrypted implements AutoCloseable {
 
     public static AbeEncrypted createDuringEncryption(byte[] iv, Bsw07Cipher cipher, InputStream input, Element plainSecret) throws AbeEncryptionException, IOException {
         return new AbeEncrypted(iv, cipher, AesEncryption.encrypt(plainSecret.toBytes(), null, iv, input)); // plainSecret is the CP-ABE M
+    }
+
+    public static AbeEncrypted createDuringEncryption(byte[] iv, Bsw07Cipher cipher, InputStream input, Element plainSecret, Element groupDelimiter) throws AbeEncryptionException, IOException {
+        return new AbeEncrypted(iv, cipher, AesEncryption.encrypt(plainSecret.toBytes(), null, iv, input), groupDelimiter); // plainSecret is the CP-ABE M
     }
 
     public static AbeEncrypted createDuringEncryption(byte[] iv, byte[] lbeKey, Bsw07Cipher cipher, InputStream input, Element plainSecret) throws AbeEncryptionException, IOException {
@@ -65,15 +80,13 @@ public class AbeEncrypted implements AutoCloseable {
      * @throws AbeDecryptionException
      * @throws IOException
      */
-    public void writeDecryptedData(AbePrivateKey privateKey, OutputStream output) throws AbeDecryptionException, IOException {
-        Element secret = Bsw07.decrypt(privateKey, cipher);
-        byte[] cpabeKey = secret.toBytes();
+    public void writeDecryptedData(AbePrivateKey privateKey, OutputStream output, Element groupDelimiter) throws AbeDecryptionException, IOException {
+        byte[] cpabeKey = Bsw07.decrypt(privateKey, cipher, groupDelimiter);
         AesEncryption.decrypt(cpabeKey, null, iv, dataStream, output);
     }
 
-    public void writeDecryptedData(AbePrivateKey privateKey, byte[] lbeKey, OutputStream output) throws AbeDecryptionException, IOException {
-        Element secret = Bsw07.decrypt(privateKey, cipher);
-        byte[] cpabeKey = secret.toBytes();
+    public void writeDecryptedData(AbePrivateKey privateKey, byte[] lbeKey, OutputStream output, Element groupDelimiter) throws AbeDecryptionException, IOException {
+        byte[] cpabeKey = Bsw07.decrypt(privateKey, cipher, groupDelimiter);
         AesEncryption.decrypt(cpabeKey, lbeKey, iv, dataStream, output);
     }
 

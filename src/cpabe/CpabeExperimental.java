@@ -71,8 +71,8 @@ public class CpabeExperimental {
         return Bsw07.keygen(secretKey, encrypted.getCipher());
     }
 
-    public static byte[] forceDecrypt(AbeSecretMasterKey secretKey, AbeEncrypted encrypted) throws AbeDecryptionException, IOException {
-        return Cpabe.decrypt(generatePrivateKeyFromEncrypted(secretKey, encrypted), encrypted);
+    public static byte[] forceDecrypt(AbeSecretMasterKey secretKey, AbeEncrypted encrypted, Element groupDelimeter) throws AbeDecryptionException, IOException {
+        return Cpabe.decrypt(generatePrivateKeyFromEncrypted(secretKey, encrypted), encrypted, groupDelimeter);
     }
 
 }

@@ -78,9 +78,9 @@ public class Cpabe {
      * @param input
      * @param output
      */
-    public static void decrypt(AbePrivateKey privateKey, InputStream input, OutputStream output) throws IOException, AbeDecryptionException {
+    public static void decrypt(AbePrivateKey privateKey, InputStream input, OutputStream output, Element groupDelimiter) throws IOException, AbeDecryptionException {
         AbeEncrypted encrypted = AbeEncrypted.readFromStream(privateKey.getPublicKey(), input);
-        encrypted.writeDecryptedData(privateKey, output);
+        encrypted.writeDecryptedData(privateKey, output, groupDelimiter);
     }
 
     /**
@@ -90,19 +90,19 @@ public class Cpabe {
      * @param encryptedData
      * @return the decrypted data
      */
-    public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData) throws AbeDecryptionException, IOException {
+    public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData, Element groupDelimiter) throws AbeDecryptionException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        encryptedData.writeDecryptedData(privateKey, out);
+        encryptedData.writeDecryptedData(privateKey, out, groupDelimiter);
         byte[] out_array=out.toByteArray();
         return out_array;
 
     }
 
-    public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile) throws IOException, AbeDecryptionException {
+    public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile, Element groupDelimiter) throws IOException, AbeDecryptionException {
         AbePrivateKey privateKey = AbePrivateKey.readFromFile(privateKeyFile);
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(encryptedFile));
              BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(decryptedFile))) {
-            decrypt(privateKey, in, out);
+            decrypt(privateKey, in, out, groupDelimiter);
         }
     }
 
@@ -144,7 +144,7 @@ public class Cpabe {
             byte[] iv = new byte[16];
             SecureRandom random = new SecureRandom();
             random.nextBytes(iv);
-            return AbeEncrypted.createDuringEncryption(iv, abeEncryptedSecret, input, plainSecret); // here aes encryption is done
+            return AbeEncrypted.createDuringEncryption(iv, abeEncryptedSecret, input, plainSecret, groupDelimiter); // here aes encryption is done
                                                                                                     // plainSecret is the CP-ABE M
         } catch (ParseException e) {
             throw new AbeEncryptionException("error while parsing policy", e);

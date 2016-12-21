@@ -1,6 +1,7 @@
 package cpabe.tests;
 
 import cpabe.*;
+import it.unisa.dia.gas.jpbc.Element;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -15,9 +16,9 @@ import static org.junit.Assert.*;
 
 public class AreaAttributeTest {
     // so we dont need to check for exceptions every time we want to decrypt
-    private byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData) {
+    private byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData, Element groupDelimiter) {
         try {
-            return Cpabe.decrypt(privateKey, encryptedData);
+            return Cpabe.decrypt(privateKey, encryptedData, groupDelimiter);
         } catch (Exception e) {
             return null;
         }
@@ -48,23 +49,24 @@ public class AreaAttributeTest {
         AbePrivateKey inSchwerinKey = Cpabe.keygen(secretMasterkey, inSchwerin);
         AbePrivateKey outsideSchwerinKey = Cpabe.keygen(secretMasterkey, outsideSchwerin);
 
+        Element groupDelimiter= pubKey.getPairing().getZr().newRandomElement();
         //Berlin Policy
-        assertTrue(Arrays.equals(data, decrypt(inBerlinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin))));
+        assertTrue(Arrays.equals(data, decrypt(inBerlinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin),groupDelimiter)));
         baisBerlin.reset();
-        assertFalse(Arrays.equals(data, decrypt(outsideBerlinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin))));
+        assertFalse(Arrays.equals(data, decrypt(outsideBerlinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin),groupDelimiter)));
         baisBerlin.reset();
-        assertFalse(Arrays.equals(data, decrypt(inSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin))));
+        assertFalse(Arrays.equals(data, decrypt(inSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin),groupDelimiter)));
         baisBerlin.reset();
-        assertFalse(Arrays.equals(data, decrypt(outsideSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin))));
+        assertFalse(Arrays.equals(data, decrypt(outsideSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisBerlin),groupDelimiter)));
 
         //Schwerin Policy
-        assertFalse(Arrays.equals(data, decrypt(inBerlinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin))));
+        assertFalse(Arrays.equals(data, decrypt(inBerlinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin),groupDelimiter)));
         baisSchwerin.reset();
-        assertFalse(Arrays.equals(data, decrypt(outsideBerlinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin))));
+        assertFalse(Arrays.equals(data, decrypt(outsideBerlinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin),groupDelimiter)));
         baisSchwerin.reset();
-        assertTrue(Arrays.equals(data, decrypt(inSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin))));
+        assertTrue(Arrays.equals(data, decrypt(inSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin),groupDelimiter)));
         baisSchwerin.reset();
-        assertFalse(Arrays.equals(data, decrypt(outsideSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin))));
+        assertFalse(Arrays.equals(data, decrypt(outsideSchwerinKey, AbeEncrypted.readFromStream(pubKey, baisSchwerin),groupDelimiter)));
     }
 
 
@@ -319,15 +321,15 @@ public class AreaAttributeTest {
         System.out.println(String.format("this operation took %fs.", (decryptionEnd - decryptionStart) / 1E9d));
         ByteArrayInputStream baisEncrypted = TUtil.getReusableStream(encrypted, pubkey);
 
-        assertTrue(Arrays.equals(data, decrypt(pk1, AbeEncrypted.readFromStream(pubkey, baisEncrypted))));
+        Element groupDelimiter = pubkey.getPairing().getZr().newRandomElement();
         baisEncrypted.reset();
-        assertTrue(Arrays.equals(data, decrypt(pk50, AbeEncrypted.readFromStream(pubkey, baisEncrypted))));
+        assertTrue(Arrays.equals(data, decrypt(pk50, AbeEncrypted.readFromStream(pubkey, baisEncrypted),groupDelimiter)));
         baisEncrypted.reset();
-        assertTrue(Arrays.equals(data, decrypt(pk100, AbeEncrypted.readFromStream(pubkey, baisEncrypted))));
+        assertTrue(Arrays.equals(data, decrypt(pk100, AbeEncrypted.readFromStream(pubkey, baisEncrypted),groupDelimiter)));
         baisEncrypted.reset();
-        assertTrue(Arrays.equals(data, decrypt(pk150, AbeEncrypted.readFromStream(pubkey, baisEncrypted))));
+        assertTrue(Arrays.equals(data, decrypt(pk150, AbeEncrypted.readFromStream(pubkey, baisEncrypted),groupDelimiter)));
         baisEncrypted.reset();
-        assertTrue(Arrays.equals(data, decrypt(pk200, AbeEncrypted.readFromStream(pubkey, baisEncrypted))));
+        assertTrue(Arrays.equals(data, decrypt(pk200, AbeEncrypted.readFromStream(pubkey, baisEncrypted),groupDelimiter)));
         baisEncrypted.reset();
     }
 

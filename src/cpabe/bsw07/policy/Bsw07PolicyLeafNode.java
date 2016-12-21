@@ -79,8 +79,14 @@ public class Bsw07PolicyLeafNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv) {
-        Element t = prv.getPublicKey().getPairing().pairing(cp, satisfyingComponent.dp).invert(); /* num_pairings++; */
+    protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv, Element inv_groupDelimiter) {
+        //Element t = prv.getPublicKey().getPairing().pairing(cp, satisfyingComponent.dp).invert(); /* num_pairings++; */// this is the denominator part
+
+        //denominator
+        Element t = prv.getPublicKey().getPairing().pairing(cp, satisfyingComponent.dp).powZn(inv_groupDelimiter);
+        t.invert();
+
+        //numerator
         Element s = prv.getPublicKey().getPairing().pairing(c, satisfyingComponent.d).mul(t).powZn(exp); 
         /* num_pairings++ num_muls++ num_exps++ */
         r.mul(s); /* num_muls++; */

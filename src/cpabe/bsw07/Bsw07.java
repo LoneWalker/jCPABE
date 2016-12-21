@@ -146,25 +146,25 @@ public class Bsw07 {
         //pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message.BigInteger())
         //can be decrypted successfully by modifying decrypt function properly
 
-        Element group_delimiter=  getElementZrOfPreferedLength();
+        Element groupDelimiter=  getElementZrOfPreferedLength();
         Element cs = pub.e_g_g_hat_alpha.duplicate().powZn(s).mul(message);
         Element c = pub.h.duplicate().powZn(s); // h^s
-        policyTree.fillPolicy(pub, s,group_delimiter);  // s is shared using linear secret sharing scheme among the nodes
+        policyTree.fillPolicy(pub, s,groupDelimiter);  // s is shared using linear secret sharing scheme among the nodes
                                           // >> Main part to look at. The actual recursive CP-ABE encryption with policy tree is done here
                                         // Need to make changes here
                                         // look into the fillPolicy() function of class Bsw07PolicyParentNode. Because
                                         // here this abstract function is implemented
-        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), message,group_delimiter); // policyTree contains both tree and C_y, C'_y
+        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), message,groupDelimiter); // policyTree contains both tree and C_y, C'_y
         */
 
         Element s = pub.getPairing().getZr().newRandomElement(); // everything on exponent are from Z_r
         Element aesKey = getElementZrOfPreferedLength();            //20 bytes
-        Element group_delimiter=  getElementZrOfPreferedLength();   //20 bytes
+        Element groupDelimiter=  getElementZrOfPreferedLength();   //20 bytes
         Element e_g_g_hat_alph_s = pub.e_g_g_hat_alpha.duplicate().powZn(s);
         Element c = pub.h.duplicate().powZn(s); // h^s
-        byte[] cs = Utils.XOR(Utils.hashT(e_g_g_hat_alph_s.toBytes()),Utils.XOR(aesKey.toBytes(),group_delimiter.toBytes()));
-        policyTree.fillPolicy(pub, s,group_delimiter);  // s is shared using linear secret sharing scheme among the nodes
-        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), aesKey,group_delimiter); // policyTree contains both tree and C_y, C'_y
+        byte[] cs = Utils.XOR(Utils.hashT(e_g_g_hat_alph_s.toBytes()),Utils.XOR(aesKey.toBytes(),groupDelimiter.toBytes()));
+        policyTree.fillPolicy(pub, s,groupDelimiter);  // s is shared using linear secret sharing scheme among the nodes
+        return new Bsw07CipherAndKey(new Bsw07Cipher(policyTree, cs, c), aesKey,groupDelimiter); // policyTree contains both tree and C_y, C'_y
     }
 
     /**
@@ -172,17 +172,27 @@ public class Bsw07 {
      * <p/>
      * Throws an exception if decryption was not possible.
      */
-    public static Element decrypt(AbePrivateKey privateKey, Bsw07Cipher cipher) throws AbeDecryptionException {
+    public static byte[] decrypt(AbePrivateKey privateKey, Bsw07Cipher cipher, Element groupDelimiter) throws AbeDecryptionException {
         if (!canDecrypt(privateKey, cipher)) {
             throw new AbeDecryptionException(ATTRIBUTES_DONT_SATISFY);
         }
         cipher.policyTree.pickSatisfyMinLeaves(privateKey);
         Element t = privateKey.getPublicKey().getPairing().getGT().newElement();
-        cipher.policyTree.decFlatten(t, privateKey);
+        Element inv_groupDelimiter=groupDelimiter.duplicate().invert();
+        cipher.policyTree.decFlatten(t, privateKey, inv_groupDelimiter);
+
+        /* old code
         Element m = cipher.getCs().duplicate();
-        m.mul(t); /* num_muls++; */
-        t = privateKey.getPublicKey().getPairing().pairing(cipher.getC(), privateKey.getD()).invert();
-        return m.mul(t); /* num_muls++; */
+        m.mul(t); // num_muls++;
+        t = privateKey.getPublicKey().getPairing().pairing(cipher.getC(), privateKey.getD()).invert(); // numerator of C_D
+        return m.mul(t); // num_muls++;
+         */
+
+        // here, t = e_g_g_cap_rs
+        byte[] cs = cipher.getCs();
+
+        t = privateKey.getPublicKey().getPairing().pairing(cipher.getC(), privateKey.getD()).mul(t.invert()); // numerator of C_D
+        return Utils.XOR(cs,Utils.XOR(groupDelimiter.toBytes(),Utils.hashT(t.toBytes())));
     }
 
     public static boolean canDecrypt(AbePrivateKey prv, Bsw07Cipher cph) {

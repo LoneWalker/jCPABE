@@ -76,7 +76,7 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     public void fillPolicy(AbePublicKey pub, Element e, Element groupDelimiter) { // this is a recursive function. Each node of the policy tree has a polynomial poly
                                                             // in each recursive call, this poly is formed
         poly = Bsw07Polynomial.createRandom(getThreshold() - 1, e); // creating a polynomial of given degree
-        System.out.println("Threshold vale:"+getThreshold());
+        //System.out.println("Threshold vale:"+getThreshold());
         for (int i = 0; i < children.size(); i++) {
             Element r = pub.getPairing().getZr().newElement(i + 1); // x value or children index. here i+1 because 0th child's constant value is equal to y value of its parent at x=1
             Element t = evalPoly(poly, r); // y value of polynomial value at point i+1
@@ -122,12 +122,12 @@ public class Bsw07PolicyParentNode extends Bsw07PolicyAbstractNode {
     }
 
     @Override
-    protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv) {
+    protected void decFlattenSpecific(Element r, Element exp, AbePrivateKey prv, Element inv_groupDelimiter) {
         Element t = prv.getPublicKey().getPairing().getZr().newElement();
         for (Integer cur : satl) {
             lagrangeCoef(t, satl, cur);
             Element expnew = exp.duplicate().mul(t);
-            children.get(cur - 1).decFlattenSpecific(r, expnew, prv);
+            children.get(cur - 1).decFlattenSpecific(r, expnew, prv, inv_groupDelimiter);
         }
     }
 

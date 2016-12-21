@@ -5,6 +5,7 @@ import cpabe.aes.AesEncryption;
 import cpabe.aes.InputStreamStopper;
 import cpabe.tests.rules.Repeat;
 import cpabe.tests.rules.RepeatRule;
+import it.unisa.dia.gas.jpbc.Element;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -83,7 +84,9 @@ public class AesTest {
         ByteArrayInputStream input = new ByteArrayInputStream(encryptedDataPlusBytes);
         InputStream limitedInput = new InputStreamStopper(input, encryptedData.length);
         ByteArrayOutputStream decryptedStream = new ByteArrayOutputStream();
-        Cpabe.decrypt(key, limitedInput, decryptedStream);
+
+        Element groupDelimiter=pubKey.getPairing().getZr().newRandomElement();
+        Cpabe.decrypt(key, limitedInput, decryptedStream,groupDelimiter);
 
         byte[] decryptedData = decryptedStream.toByteArray();
         assertTrue(Arrays.equals(plaintext, decryptedData));

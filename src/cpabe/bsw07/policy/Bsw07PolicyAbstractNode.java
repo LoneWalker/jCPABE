@@ -36,7 +36,7 @@ public abstract class Bsw07PolicyAbstractNode {
     private static final Pattern ofPattern = Pattern.compile(of);
 
     public static Bsw07PolicyAbstractNode parsePolicy(String s, AbePublicKey publicKey) throws AbeEncryptionException {
-        System.out.println("Post-fix notation of policy tree is: "+s);
+        //System.out.println("Post-fix notation of policy tree is: "+s);
         ArrayList<Bsw07PolicyAbstractNode> stack = new ArrayList<Bsw07PolicyAbstractNode>();
         String[] toks = s.split("\\s+");
         for (int index = 0; index < toks.length; index++) {
@@ -85,12 +85,12 @@ public abstract class Bsw07PolicyAbstractNode {
 
     public abstract void pickSatisfyMinLeaves(AbePrivateKey prv) throws AbeDecryptionException;
 
-    protected abstract void decFlattenSpecific(Element r, Element one, AbePrivateKey prv);
+    protected abstract void decFlattenSpecific(Element r, Element one, AbePrivateKey prv, Element inv_groupDelimiter);
 
-    public void decFlatten(Element r, AbePrivateKey prv) {
+    public void decFlatten(Element r, AbePrivateKey prv, Element inv_groupDelimiter) {
         Element one = prv.getPublicKey().getPairing().getZr().newOneElement();
         r.setToOne();
-        decFlattenSpecific(r, one, prv);
+        decFlattenSpecific(r, one, prv, inv_groupDelimiter);
     }
 
     public abstract int getThreshold();

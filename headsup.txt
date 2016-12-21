@@ -6,7 +6,8 @@ General Findings about library:
 
 
 
-1) look at fillPolicy function of class Bsw07PolicyLeafNode. Here R_G value is needed
+1) look at fillPolicy function of class Bsw07PolicyLeafNode. Here R_G value is needed.
+And change in decryption has to be made in function decFlattenSpecific of file Bsw07PolicyLeafNode.
 2) exponent operation is done using function powZn(Element exp)
 3) M.e(g,g)^{as} , here M can be from G_T or more specifically an Integer. But point produces different result than BigInt a point in G_T.
 4) Elements in G1, G2, GT are points not Integers. So, to work with them, need to convert into integers. Taking any of the coordinate of those points would work. This can be done by calling toBigInteger() function of Element(gives x co-ordinate).

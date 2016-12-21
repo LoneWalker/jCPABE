@@ -1,7 +1,9 @@
 package cpabe.tests;
 
+import cpabe.AbePublicKey;
 import cpabe.Cpabe;
 import cpabe.tests.rules.RepeatRule;
+import it.unisa.dia.gas.jpbc.Element;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +56,8 @@ public class SerializationTests {
         Cpabe.setup(publicKey, secretKey);
         Cpabe.encrypt(publicKey, "a and b", inputFile, encryptedFile);
         Cpabe.keygen(privateKey, secretKey, "a b c");
-        Cpabe.decrypt(privateKey, encryptedFile, decryptedFile);
+        Element groupDelimiter = AbePublicKey.readFromFile(publicKey).getPairing().getZr().newRandomElement();
+        Cpabe.decrypt(privateKey, encryptedFile, decryptedFile,groupDelimiter);
 
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(decryptedFile))) {
             int read = 0;

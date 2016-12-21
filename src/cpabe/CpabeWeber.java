@@ -56,25 +56,25 @@ public class CpabeWeber {
         newPrivateKey.writeToFile(newPrivateKeyFile);
     }
 
-    public static void decrypt(AbePrivateKey privateKey, InputStream input, OutputStream output, byte[] lbeKey) throws IOException, AbeDecryptionException {
+    public static void decrypt(AbePrivateKey privateKey, InputStream input, OutputStream output, byte[] lbeKey, Element groupDelimiter) throws IOException, AbeDecryptionException {
         AbeEncrypted encrypted = AbeEncrypted.readFromStream(privateKey.getPublicKey(), input);
-        encrypted.writeDecryptedData(privateKey, lbeKey, output);
+        encrypted.writeDecryptedData(privateKey, lbeKey, output, groupDelimiter);
     }
 
-    public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData, byte[] lbeKey) throws AbeDecryptionException, IOException {
+    public static byte[] decrypt(AbePrivateKey privateKey, AbeEncrypted encryptedData, byte[] lbeKey, Element groupDelimiter) throws AbeDecryptionException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        encryptedData.writeDecryptedData(privateKey, lbeKey, out);
+        encryptedData.writeDecryptedData(privateKey, lbeKey, out, groupDelimiter);
         return out.toByteArray();
     }
 
-    public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile, byte[] lbeKey) throws IOException, AbeDecryptionException {
+    public static void decrypt(File privateKeyFile, File encryptedFile, File decryptedFile, byte[] lbeKey, Element groupDelimiter) throws IOException, AbeDecryptionException {
         AbePrivateKey privateKey = AbePrivateKey.readFromFile(privateKeyFile);
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
         try {
             in = new BufferedInputStream(new FileInputStream(encryptedFile));
             out = new BufferedOutputStream(new FileOutputStream(decryptedFile));
-            decrypt(privateKey, in, out, lbeKey);
+            decrypt(privateKey, in, out, lbeKey,groupDelimiter);
         } finally {
             if (out != null)
                 out.close();
